@@ -11,10 +11,13 @@
 			</el-col>
 			<el-col :span="4" class="userinfo">
 				<el-dropdown trigger="hover">
-					<span class="el-dropdown-link userinfo-inner"><img :src="this.sysUserAvatar" /> {{sysUserName}}</span>
+					<span class="el-dropdown-link userinfo-inner">
+						{{companyName}}
+						<!-- <img :src="this.sysUserAvatar" />  -->
+						{{sysUserName}}</span>
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item>我的消息</el-dropdown-item>
-						<el-dropdown-item>设置</el-dropdown-item>
+						<!-- <el-dropdown-item>我的消息</el-dropdown-item>
+						<el-dropdown-item>设置</el-dropdown-item> -->
 						<el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
 					</el-dropdown-menu>
 				</el-dropdown>
@@ -75,10 +78,11 @@
 	export default {
 		data() {
 			return {
-				sysName:'VUEADMIN',
+				sysName:'南京益珑信息科技有限公司',
 				collapsed:false,
 				sysUserName: '',
 				sysUserAvatar: '',
+				companyName:"",
 				form: {
 					name: '',
 					region: '',
@@ -129,7 +133,8 @@
 			var user = sessionStorage.getItem('user');
 			if (user) {
 				user = JSON.parse(user);
-				this.sysUserName = user.name || '';
+				this.sysUserName = sessionStorage.getItem('name') || '';
+				this.companyName=sessionStorage.getItem('company') || '';
 				this.sysUserAvatar = user.avatar || '';
 			}
 
@@ -168,7 +173,8 @@
 			.logo {
 				//width:230px;
 				height:60px;
-				font-size: 22px;
+				font-weight: bold;
+				font-size: 15px;
 				padding-left:20px;
 				padding-right:20px;
 				border-color: rgba(238,241,146,0.3);

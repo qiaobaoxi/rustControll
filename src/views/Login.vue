@@ -1,6 +1,8 @@
 <template>
   <el-form  @submit.native.prevent :model="ruleForm2" :rules="rules2"  ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm login-container">
-    <h3 class="title">系统登录</h3>
+    <div class="logo">
+      <img src="../assets/logo.jpg" alt="" srcset="">
+    </div> 
     <el-form-item prop="account">
       <el-input type="text" @keyup.enter.native="handleSubmit2" v-model="ruleForm2.account" auto-complete="off" placeholder="账号"></el-input>
     </el-form-item>
@@ -25,7 +27,7 @@
         logining: false,
         ruleForm2: {
           account: 'admin',
-          checkPass: '331751'
+          checkPass: '331751',
         },
         rules2: {
           account: [
@@ -37,7 +39,8 @@
             //{ validator: validaePass2 }
           ]
         },
-        checked: true
+        checked: true,
+        
       };
     },
     created(){
@@ -46,7 +49,6 @@
     methods: {
         keyupEnter(){
                 document.onkeyup = e =>{
-                  console.log(1111)
                     let body = document.getElementsByTagName('body')[0]
                     if (e.keyCode === 13 && e.target === body) {
                         this.handleSubmit2()
@@ -78,8 +80,9 @@
                 sessionStorage.setItem('name', result.user)
                 sessionStorage.setItem('userId', result.id)
                 sessionStorage.setItem('user', 1);
-                sessionStorage.setItem('time', result.time);
-                this.$router.push({ path: '/equipmentManage' });
+                sessionStorage.setItem('company', result.companyName);
+                sessionStorage.setItem('companyId', result.companyId);
+                this.$router.push({ path: '/menuManage' });
               }
             });
           } else {
@@ -113,6 +116,10 @@
     }
     .remember {
       margin: 0px 0px 35px 0px;
+    }
+    .logo{
+      margin: 10px 0;
+      text-align: center;
     }
   }
 </style>

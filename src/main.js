@@ -19,7 +19,7 @@ const router = new VueRouter({
 // 添加请求拦截器
 axios.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
-  config.url=config.url+'?sign=1&time='+sessionStorage.getItem("time")+"&name="+sessionStorage.getItem("name");
+  config.url=config.url+'?sign=1'+"&name="+sessionStorage.getItem("name");
   return config;
 }, function (error) {
   // 对请求错误做些什么

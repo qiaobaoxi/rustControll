@@ -5,8 +5,8 @@
             border
             style="width: 100%">
             <el-table-column
-                prop="id"
-                label="id"
+                label="序号"
+                type="index"
                 width="180">
             </el-table-column>
             <el-table-column
@@ -14,22 +14,22 @@
                 label="项目名称"
                >
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
                 label="设备名称"
                >
                <template slot-scope="scope">
-                    <div v-for="item in scope.row.equipments" v-bind:key="item.name" class="equipment">
-                        <span>{{item.name}}</span>
+                    <div v-for="(item,idx) in scope.row.equipments" v-bind:key="item.name" class="equipment">
+                        <em style="font-style: normal;">{{idx+1}}</em><span>{{item.name}}</span>
                         <el-button type="text" size="small" @click="deleteEquipment(scope.row,item.id)">删除设备</el-button>
                     </div>
                 </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column
                 fixed="right"
                 label="操作"
                 width="100">
                 <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="addEquipment(scope.row)">选择设备</el-button>
+                    <el-button type="text" size="small" @click="addEquipment(scope.row)">选择数据</el-button>
                     <!-- <el-button type="text" size="small" @click="medify(scope.row)">修改</el-button> -->
                     <!-- <el-button type="text" size="small" @click="deleteUser(scope.row)">删除</el-button> -->
                 </template>
@@ -45,11 +45,11 @@
         </el-pagination> 
         </div>
         <el-dialog
-            title="添加菜单"
+            title="选择数据"
             :visible.sync="dialogVisible"
             width="60%"
             :before-close="handleClose">
-            <h1>项目名称:{{twoLevelMenu}}</h1>
+            <h1>项目名称:{{menu}}</h1>
             <el-select v-model="equipments" multiple placeholder="请选择" size='medium'>
                 <el-option
                     v-for="item in selectEquipments"
@@ -68,19 +68,19 @@
 <script>
 import { VueEditor } from 'vue2-editor'
 import md5 from 'js-md5';
-import {getAllTwoLevelMenu,getAllEquipment,saveAssociatedDevice,deleteAssociatedDevice} from '../../api/api';
+import {getAllMenuByPage,getAllEquipment,saveAssociatedDevice,deleteAssociatedDevice,getAllEquipmentByMenuId} from '../../api/api';
 export default {
     data() {
         return {
             tableData: [],
             dialogVisible: false,
-            twoLevelMenu:"",
+            menu:"",
             id:0,
             nowPage:1,
             total:0,
             selectEquipments:[],
             equipments:[],
-            twoLevelMenuId:0
+            menuId:0,
         }
     },
     mounted(){
@@ -88,40 +88,62 @@ export default {
     },
     methods:{
         init(nowPage){
-            getAllTwoLevelMenu({nowPage,userId:sessionStorage.getItem('userId')}).then((result)=>{
+            getAllMenuByPage({nowPage,companyId:sessionStorage.getItem('companyId')}).then((result)=>{
                 if(result.code){
-                this.tableData=result.result.result;
-                this.total=result.result.count
+                    this.tableData=result.result.result;
+                    this.total=result.result.count
                 }else{
-                this.$message({
-                    message: result.result.msg,
-                    type: 'warning'
-                });
+                    this.$message({
+                        message: result.result.msg,
+                        type: 'warning'
+                    });
                 }
             })
-            getAllEquipment({userId:sessionStorage.getItem('userId')}).then((result)=>{
-                if(result.code){
-                  this.selectEquipments=result.result.result;
-                }else{
-                this.$message({
-                    message: result.result.msg,
-                    type: 'warning'
-                });
-                }
-            })
+            
+            this.getAllEquipment();
         },
         addEquipment(row){
+            console.log(row)
             this.dialogVisible=true;
-            this.twoLevelMenuId=row.id;
-            this.twoLevelMenu=row.name;
-            this.equipments=[];
-            for(let i=0;i<this.tableData.length;i++){
-                if(row.id===this.tableData[i].id){
-                    for(let item of this.tableData[i].equipments){
-                       this.equipments.push(item.id);
+            this.menuId=row.id;
+            this.menu=row.name;
+            this.getAllEquipment();
+            this.getAllEquipmentByMenuId();
+            // this.equipments=[];
+            // for(let i=0;i<this.tableData.length;i++){
+            //     if(row.id===this.tableData[i].id){
+            //         for(let item of this.tableData[i].equipments){
+            //            this.equipments.push(item.id);
+            //         }
+            //     }
+            // }
+        },
+        getAllEquipmentByMenuId(){
+           getAllEquipmentByMenuId({menuId:this.menuId}).then((result)=>{
+                if(result.code){
+                    this.equipments=[];
+                    for(let item of result.result){
+                        this.equipments.push(item.equipmentDataId);
                     }
+                }else{
+                    this.$message({
+                        message: result.result.msg,
+                        type: 'warning'
+                    });
+                } 
+           })
+        },
+        getAllEquipment(){
+           getAllEquipment({userId:sessionStorage.getItem('userId')}).then((result)=>{
+                if(result.code){
+                  this.selectEquipments=result.result;
+                }else{
+                this.$message({
+                    message: result.result.msg,
+                    type: 'warning'
+                });
                 }
-            }
+            })
         },
         handleClose(){
           this.dialogVisible=false;
@@ -151,16 +173,24 @@ export default {
                 }).then(() => {
                     deleteAssociatedDevice({
                       twoLevelMenuId:obj.id,
-                      equipmentId
+                      equipmentId,
+                      userId:sessionStorage.getItem('userId')
                     }).then((res)=>{
-                        this.$message({
-                            type: 'success',
-                            message: '删除成功!'
-                        });
-                        if(this.tableData.length===1&&this.nowPage>1){
-                          this.nowPage--;
+                        if(res.code){
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            if(this.tableData.length===1&&this.nowPage>1){
+                            this.nowPage--;
+                            }
+                            this.init(this.nowPage);
+                        }else{
+                            this.$message({
+                                message: res.result.msg,
+                                type: 'warning'
+                            });
                         }
-                        this.init(this.nowPage);
                     }).catch(()=>{
                         this.$message({
                             type: 'info',
@@ -204,8 +234,9 @@ export default {
                 // })
             }else{
                 saveAssociatedDevice({
-                    twoLevelMenuId:this.twoLevelMenuId,
+                    menuId:this.menuId,
                     equipments:this.equipments,
+                    userId:sessionStorage.getItem('userId')
                 }).then((result)=>{
                     if(result.code){
                             this.$message({

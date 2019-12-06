@@ -16,14 +16,15 @@ export const updateEquipment = params => { return axios.post(`${base1}/updateEqu
 export const deleteEquipment = params => { return axios.post(`${base1}/deleteEquipment`, params).then(res =>  res.data); };
 export const getEquipment = params => { return axios.get(`${base1}/getEquipment`, {params:params}).then(res =>  res.data); };
 export const getEquipmentData = params => { return axios.get(`${base1}/getEquipmentData`, {params:params}).then(res =>  res.data); };
+export const fileExisted = params => { return axios.get(`${base1}/fileExisted`, {params:params}).then(res =>  res.data); };
 export const getAllEquipment = params => { return axios.get(`${base1}/getAllEquipment`, {params:params}).then(res =>  res.data); };
 
 export const saveMenu = params => { return axios.post(`${base1}/saveMenu`, params).then(res =>  res.data); };
 export const updateMenu = params => { return axios.post(`${base1}/updateMenu`, params).then(res =>  res.data); };
 export const getAllMenu = params => { return axios.get(`${base1}/getAllMenu`, {params:params}).then(res =>  res.data); };
 export const getAllMenuByPage = params => { return axios.get(`${base1}/getAllMenuByPage`, {params:params}).then(res =>  res.data); };
-export const getAllMenuByUserId = params => { return axios.get(`${base1}/getAllMenuByUserId`, {params:params}).then(res =>  res.data); };
-
+export const getAllMenuByCompanyId = params => { return axios.get(`${base1}/getAllMenuByCompanyId`, {params:params}).then(res =>  res.data); };
+export const isMatchMenuByCompanyId = params => { return axios.get(`${base1}/isMatchMenuByCompanyId`, {params:params}).then(res =>  res.data); };
 
 export const saveTwoLevelMenu = params => { return axios.post(`${base1}/saveTwoLevelMenu`, params).then(res =>  res.data); };
 export const getAllTwoLevelMenuByMenuId = params => { return axios.get(`${base1}/getAllTwoLevelMenuByMenuId`, {params:params}).then(res =>  res.data); };
@@ -31,5 +32,5 @@ export const getAllTwoLevelMenu = params => { return axios.get(`${base1}/getAllT
 export const updateTwoLevelMenu = params => { return axios.post(`${base1}/updateTwoLevelMenu`, params).then(res =>  res.data); };
 export const saveAssociatedDevice = params => { return axios.post(`${base1}/saveAssociatedDevice`, params).then(res =>  res.data); };
 export const deleteAssociatedDevice = params => { return axios.post(`${base1}/deleteAssociatedDevice`, params).then(res =>  res.data); };
-export const getAllEquipmentByTwoLevelMenuId = params => { return axios.get(`${base1}/getAllEquipmentByTwoLevelMenuId`, {params:params}).then(res =>  res.data); };
+export const getAllEquipmentByMenuId = params => { return axios.get(`${base1}/getAllEquipmentByMenuId`, {params:params}).then(res =>  res.data); };
 
